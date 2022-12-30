@@ -27,6 +27,12 @@ app.use(session({
   }
 }));
 
+app.use((req, res, next) => {
+  res.locals.isLoggedIn = req.session.user ? true : false;
+  res.locals.email = req.session.user ? req.session.user.email : '';
+  next();
+});
+
 app.set('layout', 'layout.ejs');
 app.set('view engine', 'ejs');
 
@@ -89,6 +95,12 @@ app.post('/sign-up', (req, res) => {
         res.send('An error occurred');
       });
     });
+  });
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/');
   });
 });
 
