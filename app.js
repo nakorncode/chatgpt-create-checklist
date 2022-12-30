@@ -3,6 +3,14 @@ const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser');
 const app = express();
 
+const knex = require('knex')({
+  client: 'sqlite3',
+  connection: {
+    filename: './checklist.db'
+  },
+  useNullAsDefault: true
+});
+
 app.use(express.static('public'));
 app.use(expressLayouts);
 app.use(bodyParser.urlencoded({ extended: true }));
