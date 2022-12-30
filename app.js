@@ -134,16 +134,28 @@ app.post('/checklist', (req, res) => {
 
 app.post('/checked', (req, res) => {
   const { id, value } = req.body;
+  const userId = req.session.user.id;
 
   knex('checklists')
     .where('id', id)
-    .update({ checked: value })
+    .andWhere('userId', userId)
+    .first()
+    .then(checklist => {
+      if (!checklist) {
+        return res.status(403).send({ message: 'Forbidden' });
+      }
+
+      return knex('checklists')
+        .where('id', id)
+        .update({ checked: value });
+    })
     .then(() => res.sendStatus(200))
     .catch(error => {
       console.error(error);
       res.status(400).send({ message: 'Error updating checklist item' });
     });
 });
+
 
 app.listen(3000, () => {
   console.log('Server listening on port 3000');
