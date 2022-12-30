@@ -37,7 +37,20 @@ app.set('layout', 'layout.ejs');
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
-  res.render('index', { title: 'My Checklist' });
+  let checklists;
+  if (req.session.isLoggedIn) {
+    const userId = req.session.user.id;
+    checklists = knex
+      .select()
+      .from('checklists')
+      .where('userId', userId);
+  } else {
+    checklists = Promise.resolve([]);
+  }
+
+  checklists
+    .then(checklists => res.render('index', { checklists }))
+    .catch(error => console.error(error));
 });
 
 app.get('/login', (req, res) => {
@@ -102,6 +115,30 @@ app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/');
   });
+});
+
+app.post('/checklist', (req, res) => {
+  if (!req.session.isLoggedIn) {
+    return res.sendStatus(403);
+  }
+
+  const text = req.body.text;
+  const userId = req.session.user.id;
+
+  knex('checklists')
+    .insert({ text, userId })
+    .then(() => res.redirect('/'))
+    .catch(error => console.error(error));
+});
+
+app.post('/checked', (req, res) => {
+  const { id, value } = req.body;
+
+  knex('checklists')
+    .where('id', id)
+    .update({ checked: value })
+    .then(() => res.sendStatus(200))
+    .catch(error => console.error(error));
 });
 
 app.listen(3000, () => {

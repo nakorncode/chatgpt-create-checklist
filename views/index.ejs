@@ -1,1 +1,38 @@
-<h1>Welcome to My Checklist</h1>
+<% if (!isLoggedIn) { %>
+  <p>Please login before use this app</p>
+  <a href="/login" class="btn btn-secondary">Login</a>
+  <a href="/sign-up" class="btn btn-primary">Sign Up</a>
+<% } %>
+
+<% if (isLoggedIn) { %>
+  <ul>
+    <% checklists.forEach(checklist => { %>
+      <li>
+        <input type="checkbox" value="<%= checklist.id %>" <%= checklist.checked ? 'checked' : '' %> onchange="updateChecked(this)">
+        <%= checklist.text %>
+      </li>
+    <% }); %>
+  </ul>
+  
+  <form action="/checklist" method="post">
+    <div class="form-group">
+      <label for="text">Checklist Item</label>
+      <textarea class="form-control" id="text" name="text" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Item</button>
+  </form>
+<% } %>
+
+<script>
+  function updateChecked(checkbox) {
+    const value = checkbox.checked;
+    const id = checkbox.value;
+    fetch('/checked', {
+      method: 'POST',
+      body: JSON.stringify({ id, value }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+</script>
