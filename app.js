@@ -12,6 +12,14 @@ app.get('/', (req, res) => {
   res.render('index', { title: 'My Checklist' });
 });
 
+app.get('/login', (req, res) => {
+  res.render('login', { title: 'Login' });
+});
+
+app.get('/sign-up', (req, res) => {
+  res.render('sign-up', { title: 'Sign Up' });
+});
+
 app.listen(3000, () => {
   console.log('Server listening on port 3000');
 });
