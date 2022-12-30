@@ -1,0 +1,32 @@
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card mt-5">
+      <div class="card-body">
+        <h1 class="text-center mb-4">Login</h1>
+        <form id="login-form" method="post" action="/login">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input name="email" type="email" class="form-control" id="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input name="password" type="password" class="form-control" id="password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Validate form
+  const form = document.getElementById('login-form');
+  form.addEventListener('submit', function(event) {
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    form.classList.add('was-validated');
+  });
+</script>
