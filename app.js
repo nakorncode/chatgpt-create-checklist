@@ -1,6 +1,8 @@
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
+
 const app = express();
 
 const knex = require('knex')({
@@ -31,8 +33,23 @@ app.get('/sign-up', (req, res) => {
 });
 
 app.post('/sign-up', (req, res) => {
-  console.log(req.body);
-  res.send('Thank you for signing up!');
+  const { email, password } = req.body;
+
+  // Encrypt the password
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(password, salt, (err, hash) => {
+      // Save the user to the database
+      knex('users').insert({
+        email: email,
+        password: hash
+      }).then(() => {
+        res.send('Thank you for signing up!');
+      }).catch(err => {
+        console.error(err);
+        res.send('An error occurred');
+      });
+    });
+  });
 });
 
 app.listen(3000, () => {
