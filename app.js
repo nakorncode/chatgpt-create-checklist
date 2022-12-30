@@ -17,6 +17,7 @@ const knex = require('knex')({
 app.use(express.static('public'));
 app.use(expressLayouts);
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(session({
   secret: 'my-secret-key',
   resave: false,
@@ -138,7 +139,10 @@ app.post('/checked', (req, res) => {
     .where('id', id)
     .update({ checked: value })
     .then(() => res.sendStatus(200))
-    .catch(error => console.error(error));
+    .catch(error => {
+      console.error(error);
+      res.status(400).send({ message: 'Error updating checklist item' });
+    });
 });
 
 app.listen(3000, () => {
